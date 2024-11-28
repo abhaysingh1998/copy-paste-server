@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copy Paste Server</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2em;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Copy-Paste Server</h1>
+    <textarea id="content" placeholder="Type your content here..."></textarea><br>
+    <button id="saveButton">Save</button>
+    <button id="fetchButton">Fetch</button>
+
+    <script type="module">
+      
+        // Save content to Firestore
+    document.getElementById('saveButton').addEventListener('click', async () => {
+        const content = document.getElementById('content').value;
+        try {
+            const response = await fetch('https://copy-paste-server.vercel.app/api/saveContent', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ content }),
+            });
+            const result = await response.json();
+            if (response.ok) {
+              alert('Content Saved!');
+            } else {
+              alert('Error saving content');
+            }
+          } catch (error) {
+            alert('Error saving content');
+          }
+    });
+
+        // Fetch content from Firestore
+    document.getElementById('fetchButton').addEventListener('click', async () => {
+        try {
+            const response = await fetch('https://copy-paste-server.vercel.app/api/fetchContent');
+            const result = await response.text();
+        if (response.ok) {
+          document.getElementById('content').textContent = result || 'No content available';
+        } else {
+          alert('Error fetching content');
+        }
+      } catch (error) {
+        alert('Error fetching content');
+      }
+    });
+    </script>
+</body>
+</html>
