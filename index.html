@@ -33,6 +33,7 @@
     <input type="password" id="secret" placeholder="Enter secret key" /><br>
     <button id="saveButton">Save</button>
     <button id="fetchButton">Fetch</button>
+    <button id="clearButton">Clear</button>
     <div id="contentList"></div>
 
     <script type="module">
@@ -41,6 +42,10 @@
     document.getElementById('saveButton').addEventListener('click', async () => {
         const content = document.getElementById('content').value;
         const secret = document.getElementById('secret').value;
+        if (!secret) {
+            alert('Secret key is required.');
+            return;
+        }
         try {
             const response = await fetch('https://copy-paste-server.vercel.app/api/saveContent', {
               method: 'POST',
@@ -61,6 +66,10 @@
         // Fetch content from Firestore
     document.getElementById('fetchButton').addEventListener('click', async () => {
         const secret = document.getElementById("secret").value;
+        if (!secret) {
+            alert('Secret key is required.');
+            return;
+        }
         try {
             const response = await fetch('https://copy-paste-server.vercel.app/api/fetchContent', {
                 method: "POST",
@@ -86,6 +95,41 @@
         alert('Error fetching content');
       }
     });
+
+
+    // Clear content in Firestore
+document.getElementById('clearButton').addEventListener('click', async () => {
+    const secret = document.getElementById("secret").value;
+    if (!secret) {
+        alert('Secret key is required.');
+        return;
+    }
+
+    if (!confirm('Are you sure you want to clear all content? This action cannot be undone.')) {
+        return;
+    }
+
+    try {
+        const response = await fetch('https://copy-paste-server.vercel.app/api/clearContent', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ secret }),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert(result.message || 'Contents cleared successfully');
+            document.getElementById('contentList').innerHTML = ''; // Clear the displayed content list
+        } else {
+            alert(`Error: ${result.error || 'Failed to clear contents'}`);
+        }
+    } catch (error) {
+        alert('Error clearing contents');
+    }
+});
+
     </script>
 </body>
 </html>
