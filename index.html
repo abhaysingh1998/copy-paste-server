@@ -83,7 +83,7 @@
                 const contentList = document.getElementById('contentList');
                 contentList.innerHTML = ''; // Clear the list
                 result.forEach(item => {
-                    const div = document.createElement('div');
+                    const div = document.createElement('textarea');
                     div.className = 'content-item';
                     div.textContent = item;
                     contentList.appendChild(div);
