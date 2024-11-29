@@ -19,6 +19,12 @@
             margin-right: 10px;
             cursor: pointer;
         }
+        .content-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -27,6 +33,7 @@
     <input type="password" id="secret" placeholder="Enter secret key" /><br>
     <button id="saveButton">Save</button>
     <button id="fetchButton">Fetch</button>
+    <div id="contentList"></div>
 
     <script type="module">
       
@@ -62,12 +69,19 @@
                 },
                 body: JSON.stringify({ secret }),
             });
-            const result = await response.text();
-        if (response.ok) {
-          document.getElementById('content').textContent = result || 'No content available';
-        } else {
-          alert('Error fetching content');
-        }
+            const result = await response.json();
+            if (response.ok) {
+                const contentList = document.getElementById('contentList');
+                contentList.innerHTML = ''; // Clear the list
+                result.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'content-item';
+                    div.textContent = item;
+                    contentList.appendChild(div);
+                });
+            } else {
+              alert('Error fetching content');
+            }
       } catch (error) {
         alert('Error fetching content');
       }
