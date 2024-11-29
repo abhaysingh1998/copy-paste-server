@@ -24,6 +24,8 @@
 <body>
     <h1>Copy-Paste Server</h1>
     <textarea id="content" placeholder="Type your content here..."></textarea><br>
+    <input type="password" id="secret" placeholder="Enter secret key" />
+    <br />
     <button id="saveButton">Save</button>
     <button id="fetchButton">Fetch</button>
 
@@ -32,11 +34,12 @@
         // Save content to Firestore
     document.getElementById('saveButton').addEventListener('click', async () => {
         const content = document.getElementById('content').value;
+        const secret = document.getElementById('secret').value;
         try {
             const response = await fetch('https://copy-paste-server.vercel.app/api/saveContent', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ content }),
+              body: JSON.stringify({ content, secret }),
             });
             const result = await response.json();
             if (response.ok) {
@@ -51,8 +54,15 @@
 
         // Fetch content from Firestore
     document.getElementById('fetchButton').addEventListener('click', async () => {
+        const secret = document.getElementById("secret").value;
         try {
-            const response = await fetch('https://copy-paste-server.vercel.app/api/fetchContent');
+            const response = await fetch('https://copy-paste-server.vercel.app/api/fetchContent', {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ secret }),
+            });
             const result = await response.text();
         if (response.ok) {
           document.getElementById('content').textContent = result || 'No content available';
